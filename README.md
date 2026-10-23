@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)](package.json)
 [![Three.js](https://img.shields.io/badge/Three.js-r128-black.svg)](https://threejs.org/)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020.svg)](https://workers.cloudflare.com/)
-[![License: ISC](https://img.shields.io/badge/License-ISC-green.svg)](LICENSE)
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/deed.de)
 
 Ein interaktiver 3D-Astronomie-Explorer zur didaktischen und spielerischen Erkundung unseres Sonnensystems und der Phänomene des Weltalls direkt im Webbrowser.
 
@@ -119,4 +119,11 @@ Das mitgelieferte Skript führt Typprüfungen durch, erstellt ein reproduzierbar
 
 ## 📄 Lizenz
 
-Dieses Projekt ist unter der [ISC-Lizenz](LICENSE) lizenziert.
+Dieses Projekt ist unter der **Creative Commons Namensnennung - Nicht-kommerziell 4.0 International ([CC BY-NC 4.0](LICENSE))** lizenziert.
+
+**Kurzfassung der Bedingungen:**
+- ✅ **Teilen & Weiterverbreiten:** Sie dürfen das Material in jedwedem Format oder Medium vervielfältigen und weiterverbreiten.
+- 👤 **Namensnennung (BY):** Sie müssen angemessene Urheber- und Rechteangaben machen (Urheber: [mrgoldsmitt](https://mrgoldsmitt.work)), einen Verweis auf die Lizenz beifügen und angeben, ob Änderungen vorgenommen wurden.
+- 🚫 **Nicht-kommerziell (NC):** Sie dürfen das Material **nicht** für kommerzielle Zwecke nutzen.
+
+Weitere Details finden Sie im vollständigen Lizenztext der [LICENSE](LICENSE) sowie auf [creativecommons.org](https://creativecommons.org/licenses/by-nc/4.0/deed.de).
