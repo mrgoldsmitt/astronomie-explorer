@@ -1,0 +1,13 @@
+name = "astronomie-explorer"
+compatibility_date = "2024-03-31"
+compatibility_flags = ["nodejs_compat"]
+
+# Falls du die Custom Domain direkt im Worker eintragen möchtest (verfügbar ab Wrangler v3.0+):
+# routes = [
+#   { pattern = "astronomie-explorer.mrgoldsmitt.work/*", zone_name = "mrgoldsmitt.work" }
+# ]
+# oder (einfacher, wenn die Zone automatisch erkannt werden kann):
+# routes = ["astronomie-explorer.mrgoldsmitt.work/*"]
+
+[assets]
+directory = "./public"

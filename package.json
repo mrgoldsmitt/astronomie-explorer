@@ -1,0 +1,23 @@
+{
+  "name": "astronomie-explorer",
+  "version": "0.6.0",
+  "description": "Interaktiver Astronomie Explorer",
+  "main": "main.js",
+  "scripts": {
+    "start": "npx http-server public -o",
+    "dev": "npx http-server public -o",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "wrangler deploy"
+  },
+  "keywords": [
+    "astronomy",
+    "threejs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260331.1",
+    "typescript": "^6.0.2",
+    "wrangler": "^4.79.0"
+  }
+}

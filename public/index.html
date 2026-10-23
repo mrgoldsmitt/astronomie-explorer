@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sonnensystem & Mondphasen Simulation</title>
+    <link rel="stylesheet" href="style.css?v=39">
+</head>
+<body>
+    <div id="ui-container">
+        <!-- Modern Space-Themed Top Progress Bar -->
+        <div id="space-top-loader" class="space-top-loader hidden">
+            <div class="loader-cosmic-glow"></div>
+            <div class="loader-content">
+                <div class="loader-status">
+                    <span class="loader-icon">🪐</span>
+                    <span id="loader-title" class="loader-title">Lade hochauflösende Planetentexturen...</span>
+                    <span id="loader-percent" class="loader-percent">0%</span>
+                </div>
+                <div class="loader-track">
+                    <div id="loader-progress-bar" class="loader-bar">
+                        <div class="loader-glow-head"></div>
+                        <div class="loader-shimmer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="global-menu-btn" class="icon-btn">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+
+        <div id="global-sidebar">
+            <div class="sidebar-content">
+                <div class="sidebar-header-main">
+                    <h2>Astronomie Explorer</h2>
+                    <p class="sidebar-subtitle">Interaktiv das Weltall verstehen</p>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="section-title">Wissensniveau</h3>
+                    <div class="level-slider-container">
+                        <input type="range" id="level-slider" min="0" max="5" value="3">
+                        <div id="level-display" class="level-display-text">ab 10</div>
+                        <div id="level-detail-badge" class="level-detail-badge">Detailstufe 4/6 • 16 Monde, Asteroidengürtel, Ceres &amp; Pluto</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section" id="global-motion-section">
+                    <h3 class="section-title">Geschwindigkeit</h3>
+                    <div class="motion-sliders-card">
+                        <div class="motion-slider-row">
+                            <div class="motion-slider-header">
+                                <span class="motion-slider-label">🔄 Rotation</span>
+                                <span class="motion-slider-val sync-rotation-val">100%</span>
+                            </div>
+                            <input type="range" class="motion-range sync-rotation-slider" min="0" max="200" step="5" value="100" aria-label="Rotationsgeschwindigkeit">
+                        </div>
+                        <div class="motion-slider-row sync-orbit-row">
+                            <div class="motion-slider-header">
+                                <span class="motion-slider-label">🪐 Umkreisen</span>
+                                <span class="motion-slider-val sync-orbit-val">100%</span>
+                            </div>
+                            <input type="range" class="motion-range sync-orbit-slider" min="0" max="200" step="5" value="100" aria-label="Umlaufgeschwindigkeit">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="section-title">Modus</h3>
+                    <div class="mode-buttons">
+                        <button id="btn-solar-system" class="sidebar-btn active">
+                            Sonnensystem
+                        </button>
+                        <button id="btn-moon-phases" class="sidebar-btn">
+                            Mondphasen
+                        </button>
+                        <button id="btn-star-cycle" class="sidebar-btn">
+                            Sternenzyklus
+                        </button>
+                        <div class="sidebar-btn-group">
+                            <button id="btn-size-comparison" class="sidebar-btn">
+                                Größenvergleich
+                            </button>
+                        </div>
+                        <div class="sidebar-btn-group">
+                            <button id="btn-rocket-launch" class="sidebar-btn">
+                                Raketenstart
+                            </button>
+                        </div>
+                        <div class="sidebar-btn-group">
+                            <button id="btn-seasons" class="sidebar-btn">
+                                Jahreszeiten
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer mit Changelog & Copyright -->
+                <div class="sidebar-footer">
+                    <button id="btn-open-changelog" class="changelog-btn" type="button" title="Versionshinweise & Changelog öffnen">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>Changelog <span class="version-tag">v0.6.0</span></span>
+                    </button>
+                    <div class="sidebar-copyright">
+                        &copy; 2026 <a href="https://mrgoldsmitt.work" target="_blank" rel="noopener noreferrer" class="copyright-link">mrgoldsmitt</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="local-menu-btn" class="icon-btn right-btn" style="display: none; position: fixed; top: 15px; right: 15px; z-index: 2000;">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+
+        <button id="btn-moon-info" class="icon-btn right-btn" style="display: none; position: fixed; top: 15px; right: 15px; z-index: 2000;">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </button>
+
+        <div id="local-sidebar-right">
+            <div class="sidebar-content">
+                <div id="solar-system-list-container" class="hidden">
+                    <div class="sidebar-header-main">
+                        <h2>Sonnensystem</h2>
+                        <p class="sidebar-subtitle">Planeten, Monde &amp; Begleiter</p>
+                    </div>
+
+                    <!-- Kleiner dezenter Toggle unter der Überschrift mit SVG-Icons und Schalter -->
+                    <div class="sidebar-top-bar">
+                        <div class="filter-switch-container">
+                            <button type="button" class="switch-icon-btn active" id="btn-solar-icon-orbit" title="Umlaufbahnen (Orbit-Ansicht)" aria-label="Umlaufbahnen">
+                                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="3.5"></circle>
+                                    <ellipse cx="12" cy="12" rx="9.5" ry="4" transform="rotate(-25 12 12)"></ellipse>
+                                </svg>
+                            </button>
+                            
+                            <label class="toggle-switch" for="solar-layout-checkbox" title="Zwischen Umlaufbahnen und Planeten-Reihe wechseln">
+                                <input type="checkbox" id="solar-layout-checkbox" autocomplete="off">
+                                <span class="switch-slider"></span>
+                            </label>
+                            
+                            <button type="button" class="switch-icon-btn" id="btn-solar-icon-line" title="Planeten in einer Reihe (Merkspruch)" aria-label="Planeten-Reihe">
+                                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="4" cy="12" r="2.5" fill="currentColor"></circle>
+                                    <circle cx="9.5" cy="12" r="2" fill="currentColor"></circle>
+                                    <circle cx="14.5" cy="12" r="2.2" fill="currentColor"></circle>
+                                    <circle cx="20" cy="12" r="2" fill="currentColor"></circle>
+                                    <line x1="1" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="1.2" stroke-dasharray="1.5 2"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <span id="solar-layout-status-text" class="switch-status-text">Umlaufbahnen</span>
+                    </div>
+
+                    <!-- Zweiter dezenter Toggle: Ansicht mit oder ohne zusätzliche Himmelskörper -->
+                    <div class="sidebar-top-bar" id="solar-extras-bar" style="margin-top: -4px; margin-bottom: 12px;">
+                        <div class="filter-switch-container">
+                            <button type="button" class="switch-icon-btn" id="btn-solar-extras-off" title="Nur Planeten des Sonnensystems" aria-label="Nur Planeten">
+                                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="5"></circle>
+                                    <ellipse cx="12" cy="12" rx="9.5" ry="3.5" transform="rotate(-25 12 12)"></ellipse>
+                                </svg>
+                            </button>
+                            
+                            <label class="toggle-switch" for="solar-extras-checkbox" title="Zwischen Ansicht mit und ohne zusätzliche Himmelskörper wechseln">
+                                <input type="checkbox" id="solar-extras-checkbox" autocomplete="off" checked>
+                                <span class="switch-slider"></span>
+                            </label>
+                            
+                            <button type="button" class="switch-icon-btn active" id="btn-solar-extras-on" title="Mit zusätzlichen Himmelskörpern (Monde, Zwergplaneten, Kometen & Gürtel)" aria-label="Mit zusätzlichen Himmelskörpern">
+                                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="9" cy="12" r="4.2"></circle>
+                                    <circle cx="17.5" cy="8" r="1.8" fill="currentColor"></circle>
+                                    <circle cx="18" cy="16" r="1.3" fill="currentColor"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <span id="solar-extras-status-text" class="switch-status-text">Mit weiteren Himmelskörpern</span>
+                    </div>
+
+                    <div class="motion-sliders-card" style="margin-bottom: 10px;">
+                        <div class="motion-slider-row">
+                            <div class="motion-slider-header">
+                                <span class="motion-slider-label">🔄 Rotation</span>
+                                <span class="motion-slider-val sync-rotation-val">100%</span>
+                            </div>
+                            <input type="range" class="motion-range sync-rotation-slider" min="0" max="200" step="5" value="100" aria-label="Rotationsgeschwindigkeit">
+                        </div>
+                        <div class="motion-slider-row sync-orbit-row">
+                            <div class="motion-slider-header">
+                                <span class="motion-slider-label">🪐 Umkreisen</span>
+                                <span class="motion-slider-val sync-orbit-val">100%</span>
+                            </div>
+                            <input type="range" class="motion-range sync-orbit-slider" min="0" max="200" step="5" value="100" aria-label="Umlaufgeschwindigkeit">
+                        </div>
+                    </div>
+
+                    <div id="solar-level-summary" class="solar-level-summary"></div>
+
+                    <ul id="planet-list" class="custom-list"></ul>
+                </div>
+                
+                <div id="size-comparison-list-container" class="hidden">
+                    <div class="sidebar-header-main">
+                        <h2>Himmelskörper</h2>
+                        <p class="sidebar-subtitle">Größenvergleich Ansicht</p>
+                    </div>
+
+                    <!-- Kleiner dezenter Toggle unter der Überschrift mit SVG-Icons und Schalter -->
+                    <div class="sidebar-top-bar">
+                        <div class="filter-switch-container">
+                            <button type="button" class="switch-icon-btn" id="btn-filter-icon-solar" title="Nur Planeten des Sonnensystems" aria-label="Nur Planeten">
+                                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="5"></circle>
+                                    <ellipse cx="12" cy="12" rx="10" ry="3.5" transform="rotate(-25 12 12)"></ellipse>
+                                </svg>
+                            </button>
+                            
+                            <label class="toggle-switch" for="size-filter-checkbox" title="Zwischen Planeten und allen Himmelskörpern wechseln">
+                                <input type="checkbox" id="size-filter-checkbox" autocomplete="off" checked>
+                                <span class="switch-slider"></span>
+                            </label>
+                            
+                            <button type="button" class="switch-icon-btn active" id="btn-filter-icon-all" title="Alle Himmelskörper" aria-label="Alle Himmelskörper">
+                                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9.5 2l1.5 4.5L15.5 8l-4.5 1.5L9.5 14l-1.5-4.5L3.5 8l4.5-1.5z"></path>
+                                    <path d="M17.5 13l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <span id="size-filter-status-text" class="switch-status-text">Alle Himmelskörper</span>
+                    </div>
+
+                    <div class="motion-sliders-card" style="margin-bottom: 10px;">
+                        <div class="motion-slider-row">
+                            <div class="motion-slider-header">
+                                <span class="motion-slider-label">🔄 Rotation</span>
+                                <span class="motion-slider-val sync-rotation-val">100%</span>
+                            </div>
+                            <input type="range" class="motion-range sync-rotation-slider" min="0" max="200" step="5" value="100" aria-label="Rotationsgeschwindigkeit">
+                        </div>
+                    </div>
+                    
+                    <ul id="finale-list" class="custom-list"></ul>
+                </div>
+
+                <div id="seasons-info-container" class="hidden">
+                    <div class="sidebar-header-main">
+                        <h2>Jahreszeiten</h2>
+                        <p class="sidebar-subtitle">Erdneigung &amp; Jahresverlauf</p>
+                    </div>
+                    <div class="seasons-info-box" style="margin-top: 20px;">
+                        <div id="seasons-date" class="seasons-date">21. Juni</div>
+                        <div id="seasons-event" class="seasons-event" style="margin-top: 10px; line-height: 1.4;">Sommersonnenwende – Nordhalbkugel ist der Sonne zugeneigt</div>
+                    </div>
+                    <div id="seasons-level-explanation" class="seasons-level-explanation"></div>
+
+                    <!-- Regler und Play-Button direkt in der Seitenleiste -->
+                    <div class="seasons-sidebar-controls" style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                            <span style="font-size: 0.9rem; color: #bbb; font-weight: 500;">Simulation</span>
+                            <button id="btn-seasons-play" class="control-btn play-btn" title="Abspielen/Pausieren" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
+                                <svg id="seasons-play-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                <svg id="seasons-pause-icon" class="hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                            </button>
+                        </div>
+                        
+                        <div class="seasons-slider-group" style="width: 100%;">
+                            <label for="seasons-day-slider" style="display: block; font-size: 0.85rem; color: #888; margin-bottom: 8px;">Jahresverlauf regeln:</label>
+                            <input type="range" id="seasons-day-slider" min="0" max="364" value="171" class="seasons-range" style="width: 100%;">
+                        </div>
+
+                        <div class="motion-sliders-card">
+                            <div class="motion-slider-row">
+                                <div class="motion-slider-header">
+                                    <span class="motion-slider-label">🔄 Rotation (Erde)</span>
+                                    <span class="motion-slider-val sync-rotation-val">100%</span>
+                                </div>
+                                <input type="range" class="motion-range sync-rotation-slider" min="0" max="200" step="5" value="100" aria-label="Rotationsgeschwindigkeit der Erde">
+                            </div>
+                            <div class="motion-slider-row">
+                                <div class="motion-slider-header">
+                                    <span class="motion-slider-label">🪐 Umkreisen (Sonne)</span>
+                                    <span class="motion-slider-val sync-orbit-val">100%</span>
+                                </div>
+                                <input type="range" class="motion-range sync-orbit-slider" min="0" max="200" step="5" value="100" aria-label="Umlaufgeschwindigkeit um die Sonne">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; margin-top: 5px;">
+                            <button id="btn-seasons-focus-earth" class="sidebar-action-btn" style="flex: 1; font-size: 0.8rem; padding: 8px 10px; background: rgba(0, 212, 255, 0.15); border: 1px solid rgba(0, 212, 255, 0.4); border-radius: 8px; color: #fff; cursor: pointer; transition: all 0.2s ease;">🔍 Erde fokussieren</button>
+                            <button id="btn-seasons-overview" class="sidebar-action-btn" style="flex: 1; font-size: 0.8rem; padding: 8px 10px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #ccc; cursor: pointer; transition: all 0.2s ease;">🪐 Gesamtansicht</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="time-controls" class="hidden">
+            <div class="time-buttons-group">
+                <button id="btn-rewind" class="time-btn" title="Zurückspulen">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><polygon points="11 19 2 12 11 5 11 19"></polygon><polygon points="22 19 13 12 22 5 22 19"></polygon></svg>
+                </button>
+                <button id="btn-playpause" class="time-btn" title="Play/Pause">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"></polygon><line x1="10" y1="15" x2="10" y2="9" class="pause-lines hidden"></line><line x1="14" y1="15" x2="14" y2="9" class="pause-lines hidden"></line></svg>
+                </button>
+                <button id="btn-fastforward" class="time-btn" title="Vorspulen">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
+                </button>
+                <span id="time-scale-display">1x</span>
+            </div>
+            <div class="time-sliders-divider"></div>
+            <div class="time-sliders-group">
+                <div class="compact-slider-item">
+                    <div class="compact-slider-top">
+                        <span class="compact-slider-title">🔄 Rotation</span>
+                        <span class="compact-slider-val sync-rotation-val">100%</span>
+                    </div>
+                    <input type="range" class="motion-range sync-rotation-slider" min="0" max="200" step="5" value="100" aria-label="Rotationsgeschwindigkeit">
+                </div>
+                <div class="compact-slider-item sync-orbit-row">
+                    <div class="compact-slider-top">
+                        <span class="compact-slider-title">🪐 Umkreisen</span>
+                        <span class="compact-slider-val sync-orbit-val">100%</span>
+                    </div>
+                    <input type="range" class="motion-range sync-orbit-slider" min="0" max="200" step="5" value="100" aria-label="Umlaufgeschwindigkeit">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Eleganter Merkspruch-Banner bei aufgereihter Ansicht -->
+        <div id="solar-mnemonic-banner" class="hidden">
+            <div class="mnemonic-banner-inner">
+                <span class="mnemonic-banner-title">Merkspruch:</span>
+                <span class="mnemonic-banner-phrase">
+                    <span class="m-word"><strong class="highlight-letter">M</strong>ein</span>
+                    <span class="m-word"><strong class="highlight-letter">V</strong>ater</span>
+                    <span class="m-word"><strong class="highlight-letter">e</strong>rklärt</span>
+                    <span class="m-word"><strong class="highlight-letter">m</strong>ir</span>
+                    <span class="m-word"><strong class="highlight-letter">j</strong>eden</span>
+                    <span class="m-word"><strong class="highlight-letter">S</strong>onntag</span>
+                    <span class="m-word"><strong class="highlight-letter">u</strong>nseren</span>
+                    <span class="m-word"><strong class="highlight-letter">N</strong>achthimmel.</span>
+                </span>
+            </div>
+        </div>
+
+        <div id="info-panel" class="hidden">
+            <div class="info-header-row">
+                <div class="info-title-wrap">
+                    <h2 id="info-title">Planet Name</h2>
+                    <span id="info-level-pill" class="info-level-pill">ab 10</span>
+                </div>
+                <div class="info-header-right">
+                    <button id="btn-back-parent" class="btn-back-parent hidden" type="button" title="Zurück zum Mutterplaneten">← Hauptkörper</button>
+                    <div class="info-header-actions">
+                        <button id="btn-minimize-info" class="info-action-btn" type="button" title="Infokarte ausblenden (Ansicht beibehalten)" aria-label="Infokarte ausblenden">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <button id="btn-close-info" class="info-action-btn info-action-close" type="button" title="Schließen (Zurück zur Übersicht)" aria-label="Schließen">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="info-content">
+                <div class="info-meta-grid">
+                    <p><strong>Typ:</strong> <span id="info-type"></span></p>
+                    <p><strong>Durchmesser:</strong> <span id="info-diameter"></span><span id="info-diameter-unit"> km</span></p>
+                    <p><strong id="info-distance-label">Entfernung zur Sonne:</strong> <span id="info-distance"></span><span id="info-distance-unit"> Mio. km</span></p>
+                    <p id="info-period-row" class="hidden"><strong>Umlaufzeit:</strong> <span id="info-period"></span></p>
+                    <p id="info-temp-row" class="hidden"><strong>Temperatur:</strong> <span id="info-temp"></span></p>
+                </div>
+                <p id="info-mnemonic-row" class="hidden"><strong>Merkspruch:</strong> <span id="info-mnemonic"></span></p>
+                <p class="info-desc-paragraph"><strong>Besonderheit:</strong> <span id="info-description"></span></p>
+                <div id="info-companions-section" class="info-companions-section hidden">
+                    <div class="info-companions-header">
+                        <span id="info-companions-title" class="info-companions-title">Monde &amp; Begleiter</span>
+                        <span id="info-moons-total" class="info-moons-total"></span>
+                    </div>
+                    <div id="info-companions-list" class="info-companions-list"></div>
+                    <div id="info-companions-hint" class="info-companions-hint hidden"></div>
+                </div>
+                <div class="motion-inline-bar" style="margin-top: 12px;">
+                    <div class="compact-slider-item">
+                        <div class="compact-slider-top">
+                            <span class="compact-slider-title">🔄 Rotation</span>
+                            <span class="compact-slider-val sync-rotation-val">100%</span>
+                        </div>
+                        <input type="range" class="motion-range sync-rotation-slider" min="0" max="200" step="5" value="100" aria-label="Rotationsgeschwindigkeit">
+                    </div>
+                    <div class="compact-slider-item sync-orbit-row">
+                        <div class="compact-slider-top">
+                            <span class="compact-slider-title">🪐 Umkreisen</span>
+                            <span class="compact-slider-val sync-orbit-val">100%</span>
+                        </div>
+                        <input type="range" class="motion-range sync-orbit-slider" min="0" max="200" step="5" value="100" aria-label="Umlaufgeschwindigkeit">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="btn-docked-close" class="docked-close-btn hidden" type="button" title="Ansicht verlassen (Schließen)" aria-label="Ansicht verlassen">
+            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
+        <div id="moon-legend" class="hidden">
+            <h3>Mondphasen Legende</h3>
+            <p id="moon-phase-current" class="moon-phase-current">Aktuell: Vollmond</p>
+            <ul id="phase-list">
+                <li><span class="dot newmoon"></span> Neumond</li>
+                <li><span class="dot waxing"></span> Zunehmend</li>
+                <li><span class="dot fullmoon"></span> Vollmond</li>
+                <li><span class="dot waning"></span> Abnehmend</li>
+            </ul>
+            <div class="motion-sliders-card" style="margin-top: 12px;">
+                <div class="motion-slider-row">
+                    <div class="motion-slider-header">
+                        <span class="motion-slider-label">🔄 Rotation (Erde)</span>
+                        <span class="motion-slider-val sync-rotation-val">100%</span>
+                    </div>
+                    <input type="range" class="motion-range sync-rotation-slider" min="0" max="200" step="5" value="100" aria-label="Rotationsgeschwindigkeit">
+                </div>
+                <div class="motion-slider-row">
+                    <div class="motion-slider-header">
+                        <span class="motion-slider-label">🪐 Umkreisen (Mond)</span>
+                        <span class="motion-slider-val sync-orbit-val">100%</span>
+                    </div>
+                    <input type="range" class="motion-range sync-orbit-slider" min="0" max="200" step="5" value="100" aria-label="Umlaufgeschwindigkeit">
+                </div>
+            </div>
+            <div id="moon-level-explanation" class="moon-level-explanation"></div>
+        </div>
+
+        <div id="star-cycle-overlay" class="hidden">
+            <div class="sc-actions-container">
+                <button id="btn-sc-opt1" class="sc-action-btn hidden">Weg 1</button>
+                <button id="btn-sc-opt2" class="sc-action-btn hidden">Weg 2</button>
+            </div>
+            <div class="sc-text-panel">
+                <h2 id="sc-phase-name">Phase</h2>
+                <p id="sc-phase-desc" class="sc-desc-text"></p>
+                <div class="motion-inline-bar single-slider" style="margin: 12px auto 0 auto; max-width: 280px;">
+                    <div class="compact-slider-item">
+                        <div class="compact-slider-top">
+                            <span class="compact-slider-title">🔄 Objekt-Rotation</span>
+                            <span class="compact-slider-val sync-rotation-val">100%</span>
+                        </div>
+                        <input type="range" class="motion-range sync-rotation-slider" min="0" max="200" step="5" value="100" aria-label="Rotationsgeschwindigkeit">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="size-comparison-overlay" class="hidden">
+            <button id="btn-play-blackhole" class="hidden icon-action-btn">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="white" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Animation
+            </button>
+            <div class="nav-btn prev" id="btn-prev-size">❮</div>
+            <div class="size-info">
+                <h2 id="size-name">Ceres</h2>
+                <p id="size-diameter">Durchmesser: 950 km</p>
+                <p id="size-type">Typ: Zwergplanet</p>
+                <p id="size-desc" class="size-desc-text"></p>
+                <div class="motion-inline-bar single-slider" style="margin: 10px auto 0 auto; max-width: 260px;">
+                    <div class="compact-slider-item">
+                        <div class="compact-slider-top">
+                            <span class="compact-slider-title">🔄 Rotation</span>
+                            <span class="compact-slider-val sync-rotation-val">100%</span>
+                        </div>
+                        <input type="range" class="motion-range sync-rotation-slider" min="0" max="200" step="5" value="100" aria-label="Rotationsgeschwindigkeit">
+                    </div>
+                </div>
+            </div>
+            <div class="nav-btn next" id="btn-next-size">❯</div>
+        </div>
+
+        <!-- Rocket Launch Tool UI -->
+        <div id="rocket-launch-overlay" class="hidden">
+            <div id="rocket-timer" class="rocket-timer hidden">
+                Mission Zeit: <span id="rocket-timer-countdown">00:35</span>
+            </div>
+            <div id="rocket-countdown" class="countdown-text hidden">5</div>
+            
+            <div id="rocket-launch-init" class="center-panel">
+                <div id="rocket-loading-container">
+                    <div class="loading-label">Modelle werden geladen...</div>
+                    <div class="progress-bar-bg">
+                        <div id="rocket-progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+                <button id="btn-start-countdown" class="large-action-btn hidden">Countdown starten</button>
+            </div>
+
+            <div id="rocket-controls" class="media-toolbar hidden">
+                <button id="btn-rocket-reset" class="control-btn" title="Neustart">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                </button>
+                <button id="btn-rocket-rewind" class="control-btn" title="Zurückspulen">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 19 2 12 11 5 11 19"></polygon><polygon points="22 19 13 12 22 5 22 19"></polygon></svg>
+                </button>
+                <button id="btn-rocket-playpause" class="control-btn" title="Play/Pause">
+                    <svg id="rocket-play-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    <svg id="rocket-pause-icon" class="hidden" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                </button>
+                <button id="btn-rocket-fastforward" class="control-btn" title="Vorspulen">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
+                </button>
+            </div>
+        </div>
+
+        </div>
+
+    </div>
+
+    <!-- Changelog Popup / Modal (direct child of body for reliable pointer events & scrolling) -->
+    <div id="changelog-modal" class="modal-backdrop hidden" aria-hidden="true">
+        <div class="modal-dialog changelog-dialog" role="dialog" aria-modal="true" aria-labelledby="changelog-modal-title">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <span class="modal-icon">🚀</span>
+                    <div>
+                        <h2 id="changelog-modal-title" class="modal-title">Versionshinweise &amp; Changelog</h2>
+                        <p class="modal-subtitle">Astronomie Explorer – Updates &amp; Neuerungen</p>
+                    </div>
+                </div>
+                <button id="btn-close-changelog" class="icon-btn modal-close-btn" aria-label="Schließen" title="Schließen">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body changelog-body">
+                <!-- Version 0.6.0 -->
+                <div class="changelog-release current-release">
+                    <div class="release-header">
+                        <span class="badge badge-primary">v0.6.0</span>
+                        <span class="release-tag">Aktuelle Version</span>
+                        <span class="release-date">Oktober 2026</span>
+                    </div>
+                    <div class="release-content">
+                        <h4 class="release-category">📱 Smartphone: Kompakte Info-Karten (50 % Höhe)</h4>
+                        <ul class="release-list">
+                            <li><strong>Halbierte Kartenhöhe auf Smartphones:</strong> Auf Mobilgeräten nimmt die geöffnete Infokarte jetzt nur noch halb so viel Bildschirmhöhe ein wie zuvor (maximal 21 % der Displayhöhe statt über 42 %). Dadurch bleiben Planeten, Monde und der 3D-Weltraum auch auf kleineren Smartphone-Displays jederzeit großflächig im Blick.</li>
+                            <li><strong>Vollständiger Informationserhalt:</strong> Sämtliche Daten (Typ, Durchmesser, Sonnenabstand, Umlaufzeit, Temperatur, Besonderheiten, didaktischer Merkspruch, Begleiterliste sowie die Geschwindigkeitsregler) bleiben zu 100 % erhalten und sind über flüssiges Touch-Scrollen bequem zugänglich. Auf Desktop-Monitoren behält die Karte ihre großzügige Originalgröße.</li>
+                        </ul>
+
+                        <h4 class="release-category">🎛️ Header-Aktionen: Minimieren &amp; Schließen als Symbole</h4>
+                        <ul class="release-list">
+                            <li><strong>Symbole oben rechts:</strong> Der bisherige große Schließen-Button am unteren Ende der Infokarte wurde durch zwei kompakte, elegante Symbolschaltflächen in der oberen rechten Ecke der Karte ersetzt (sowohl auf Desktop als auch Mobilgeräten).</li>
+                            <li><strong>Ausblenden bei erhaltener 3D-Ansicht:</strong> Ein neuer Minimieren-Button (⌄) blendet die Karte vollständig aus, behält aber die 3D-Kamerafokussierung und das automatische Bahn-Tracking des Himmelskörpers bei.</li>
+                            <li><strong>Dockender Schließen-Button am unteren Bildschirmrand:</strong> Beim Ausblenden der Karte wandert die Schließen-Schaltfläche als schwebendes, leuchtendes Kreissymbol (✕) an den unteren Bildschirmrand, um die Planetenansicht jederzeit mit einem Klick verlassen zu können.</li>
+                            <li><strong>Wiederherstellen per Planet-Klick:</strong> Ein einfacher Klick oder Fingertipp auf den beobachteten 3D-Planeten öffnet die Infokarte sofort wieder und lässt die untere Schließen-Schaltfläche nahtlos wieder nach oben rechts in die Infokarte wandern.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Version 0.5.0 -->
+                <div class="changelog-release">
+                    <div class="release-header">
+                        <span class="badge badge-secondary">v0.5.0</span>
+                        <span class="release-date">Oktober 2026</span>
+                    </div>
+                    <div class="release-content">
+                        <h4 class="release-category">🪐 Sonnensystem: Zoom-reaktive Begleiter-Pillen</h4>
+                        <ul class="release-list">
+                            <li><strong>Dynamische Sichtbarkeit nach Zoomstufe:</strong> In der Gesamtansicht des Sonnensystems sind alle störenden Text-Pillen für zusätzliche Himmelskörper (Monde, Raumsonden, Zwergplaneten) ausgeblendet, wodurch der 3D-Blick auf die Planetenbahnen sauber und kinoreif bleibt.</li>
+                            <li><strong>Fokussiertes Erscheinen beim Heranzoomen:</strong> Erst beim gezielten Heranzoomen an einen Planeten (per Klick in der 3D-Szene, Klick in der Seitenleiste oder freiem Orbit-Zoom) erscheinen mit einer weichen Fade-In-Animation exklusiv die Pillen der zu diesem Planeten gehörenden Begleiter (z. B. Mond Luna, ISS &amp; JWST bei der Erde).</li>
+                            <li><strong>Automatische Bereinigung:</strong> Sobald aus dem Planeten herausgezoomt wird, das Informationspanel geschlossen wird oder das Werkzeug gewechselt wird, verschwinden die Begleiter-Pillen sofort wieder vollständig.</li>
+                        </ul>
+
+                        <h4 class="release-category">🎛️ Sonnensystem: Neuer Seitenleisten-Toggle für zusätzliche Himmelskörper</h4>
+                        <ul class="release-list">
+                            <li><strong>Ansicht mit / ohne zusätzliche Körper:</strong> Neuer dezenter Glasmorphismus-Schalter direkt unter dem Umlaufbahnen/Reihenfolge-Toggle in der rechten Seitenleiste zum sofortigen Ein- und Ausschalten aller Begleiter (Monde, Raumsonden, Asteroidengürtel, Kuipergürtel, Zwergplaneten und Kometen).</li>
+                            <li><strong>Gefilterte Planetenliste:</strong> Im Modus „Nur Planeten des Sonnensystems“ wird auch die Seitenleistenliste auf die reinen 8 Hauptplaneten bereinigt und alle Unterlisten sowie Zwergplaneten ausgeblendet.</li>
+                            <li><strong>Interaktions-Sicherheit:</strong> Beim Deaktivieren werden auch die 3D-Raycast-Kollisionen auf die Hauptplaneten beschränkt, sodass keine unsichtbaren Körper angewählt werden können.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Version 0.4.0 -->
+                <div class="changelog-release">
+                    <div class="release-header">
+                        <span class="badge badge-secondary">v0.4.0</span>
+                        <span class="release-date">Oktober 2026</span>
+                    </div>
+                    <div class="release-content">
+                        <h4 class="release-category">🚀 Raketenstart: Realistisches Antriebsfeuer &amp; Mars-Andocken</h4>
+                        <ul class="release-list">
+                            <li><strong>Mehrstufiges Überschall-Feuer &amp; Mach-Knoten:</strong> Prozedurale volumetrische Flammenkegel mit Schock-Diamanten, Mündungsglühen und stufenspezifischer Zündung für Feststoff-Booster (weiß-orange Flammen bis Stufe 1), Haupttank (großer Feuerstrahl bis Stufe 2) und Space Shuttle (kryogenes SSME/OMS-Plasma mit Triebwerksdrosselung im Landeanflug).</li>
+                            <li><strong>Dynamischer Flammen- &amp; Rauchschweif:</strong> Bis zu 160 additive Partikel folgen dem physikalischen Schubvektor und der Neigung des Shuttles mit Temperatur-Glutfarben sowie aufsteigenden Startrampen-Dampfwolken beim Liftoff.</li>
+                            <li><strong>Kollisionsfreies Andocken an der Mars-Unterseite:</strong> Exakte Positionierung des Mars-Südpols bei <code>y = 50.000</code> im Welt-Koordinatensystem. Streng monotone, stetige $C^2$-Trajektorie verhindert jegliches Durchschießen durch den Planeten. Sanfte 90°-Drehung und Zentrierung des Shuttles zum bündigen Aufsetzen an der Unterseite.</li>
+                        </ul>
+
+                        <h4 class="release-category">🎛️ Universelle Geschwindigkeitsregler (Rotation &amp; Umkreisen)</h4>
+                        <ul class="release-list">
+                            <li><strong>Stufenlose Steuerung von 0 % bis 200 %:</strong> In jedem relevanten Tool (Sonnensystem, Mondphasen, Größenvergleich, Sternenzyklus, Jahreszeiten und Hauptmenü) können die Eigenrotation und das Umkreisen anderer Körper unabhängig voneinander geregelt und bei Bedarf komplett auf 0 % gestoppt werden.</li>
+                            <li><strong>Intuitive Platzierung &amp; Synchronisierung:</strong> Direkt in der unteren Steuerleiste, im geöffneten Detail-Infopanel (auch bei herangezoomtem Planeten/Mond bedienbar), in den rechten Werkzeug-Seitenleisten und Overlays integriert und echtzeit-synchronisiert.</li>
+                            <li><strong>Harmonisierte Rotationsgeschwindigkeiten:</strong> Rotationsgeschwindigkeiten von Sirius A und Vega um 50 % reduziert; allgemeine Geschwindigkeitsoptimierung für alle 3D-Himmelskörper.</li>
+                        </ul>
+
+                        <h4 class="release-category">🪐 Sonnensystem: Didaktische Bereinigung &amp; Sternenhimmel</h4>
+                        <ul class="release-list">
+                            <li><strong>Makelloser Sternenhimmel &amp; Schleier-Beseitigung:</strong> Die fehlerhafte Textur-Kugelhülle mit sichtbarem Texturabbruch und dunklem Schleier wurde vollständig entfernt und durch ein nahtloses, sphärisches 3D-Sternenfeld (7.500 Sterne) mit prozeduralem Milchstraßen-Sternenstrom ersetzt.</li>
+                            <li><strong>Fokussierter Merkspruch-Modus:</strong> Im Reihenfolge-Modus werden Zwergplaneten und Kometen ausgeblendet, um den Fokus exakt auf die 8 Planeten des Merkspruchs zu legen.</li>
+                            <li><strong>Luna-Kameraflug &amp; Zoom-Reset:</strong> Zuverlässiger 3D-Kameraflug auf den Erdmond und sanfter GSAP-Rückzoom auf das Gesamtsystem beim Schließen des Infopanels.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Version 0.3.0 -->
+                <div class="changelog-release">
+                    <div class="release-header">
+                        <span class="badge badge-secondary">v0.3.0</span>
+                        <span class="release-date">Oktober 2026</span>
+                    </div>
+                    <div class="release-content">
+                        <h4 class="release-category">🪐 Sonnensystem: Dynamische Detailstufen nach Wissensniveau</h4>
+                        <ul class="release-list">
+                            <li><strong>29 Monde &amp; Raumsonden in 3D:</strong> Je nach gewähltem Wissensniveau (<code>ab 4</code> bis <code>Experte</code>) erscheinen Erdmond, ISS, James-Webb-Teleskop, Phobos &amp; Deimos, die Galileischen Monde (Io, Europa, Ganymed, Kallisto + Amalthea &amp; Juno), 7 Saturnmonde (Titan mit Atmosphäre, Enceladus mit Kryovulkan-Fontänen, Mimas, Rhea, Dione, Iapetus, Hyperion, Phoebe + Cassini), 5 Uranusmonde sowie Triton &amp; Proteus.</li>
+                            <li><strong>Zwergplaneten, Kometen &amp; Gürtel:</strong> Ab mittleren und höheren Stufen werden der 3D-Asteroidengürtel, Kuipergürtel, Ceres, Vesta, Pluto &amp; Charon, der Halleysche Komet mit dynamischem Staub-/Ionenschweif, Haumea (inkl. Ring), Makemake, Eris &amp; Dysnomia, Jupiter-Trojaner (Hektor) und Sedna eingeblendet.</li>
+                            <li><strong>Ladebalken bei Niveauwechsel:</strong> Jede Umstellung des Wissensniveaus lädt und generiert die zugehörigen 3D-Modelle und Texturen sichtbar über den Space-Ladebalken.</li>
+                        </ul>
+
+                        <h4 class="release-category">✨ 3D-Modelle &amp; Hochauflösende Texturen in allen 6 Tools</h4>
+                        <ul class="release-list">
+                            <li><strong>PBR-Oberflächen &amp; Normal Maps:</strong> Neue hochauflösende Texturen und Normal Maps für Gesteinsplaneten, 25 Monde und Zwergplaneten sowie Nachtlichter der Erde, Atmosphären-Fresnel-Shader und Ringsysteme für Jupiter, Saturn, Uranus, Neptun und Haumea.</li>
+                            <li><strong>Volumetrische 3D-Deep-Sky-Objekte:</strong> Im Größenvergleich und Sternenzyklus wurden flache 2D-Karten durch echte 3D-Partikel-Nebel (Katzenaugen-, Helix-, Orionnebel), 3D-Kugelsternhaufen (Omega Centauri), 3D-Galaxien und Schwarze Löcher mit Gravitationslinsen-Halo &amp; relativistischen Jets ersetzt.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Version 0.2.0 -->
+                <div class="changelog-release">
+                    <div class="release-header">
+                        <span class="badge badge-secondary">v0.2.0</span>
+                        <span class="release-date">September 2026</span>
+                    </div>
+                    <div class="release-content">
+                        <h4 class="release-category">🪐 Sonnensystem: Planeten-Reihe &amp; Merkspruch</h4>
+                        <ul class="release-list">
+                            <li><strong>Neue Reihenfolge-Ansicht:</strong> Per Umschalter in der rechten Seitenleiste gleiten Sonne und alle 8 Planeten per GSAP-Animation nebeneinander auf eine gemeinsame Achse.</li>
+                            <li><strong>Merkspruch-Integration:</strong> Vollständige Einbindung des Merksatzes <em>„Mein Vater erklärt mir jeden Sonntag unseren Nachthimmel.“</em> als leuchtendes Banner, in der Planetenliste und im Infopanel mit Farb-Hervorhebung.</li>
+                            <li><strong>Optimierte Ausleuchtung:</strong> Zusätzliches Frontallicht leuchtet alle Planeten in der Reihe gleichmäßig und kontrastreich aus.</li>
+                        </ul>
+
+                        <h4 class="release-category">🎥 Kameraführung &amp; Dynamisches Tracking</h4>
+                        <ul class="release-list">
+                            <li><strong>Schwungvoller Zoom:</strong> Sanft beschleunigter Kameraübergang (GSAP <code>power2.out</code>) direkt zur Tagseite des ausgewählten Himmelskörpers.</li>
+                            <li><strong>Freie 360°-Kamerabewegung:</strong> Die Kamera folgt dem Planeten auf seiner Umlaufbahn, während sie mit OrbitControls jederzeit frei gedreht, geneigt und gezoomt werden kann.</li>
+                        </ul>
+
+                        <h4 class="release-category">⚖️ Größenvergleich &amp; UI-Feinschliff</h4>
+                        <ul class="release-list">
+                            <li><strong>Dezenter Toggle:</strong> Eleganter SVG-Umschalter unter der Überschrift zum schnellen Filtern zwischen den Planeten des Sonnensystems und allen Himmelskörpern.</li>
+                            <li><strong>Detailreichere Texturen:</strong> Anisotrope Texturfilterung und verbesserte Lichtmodelle für Gasriesen und Sterne.</li>
+                            <li><strong>Jahreszeiten-Simulation:</strong> Unterbrechungsfreier Zoom bis an die Erdoberfläche und zuverlässiger Rotationsstopp bei Pause.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Version 0.1.0 -->
+                <div class="changelog-release">
+                    <div class="release-header">
+                        <span class="badge badge-secondary">v0.1.0</span>
+                        <span class="release-tag">Basis-Release</span>
+                        <span class="release-date">April 2026</span>
+                    </div>
+                    <div class="release-content">
+                        <h4 class="release-category">✨ Kernfunktionen</h4>
+                        <ul class="release-list">
+                            <li><strong>Interaktives 3D-Sonnensystem:</strong> Sonne und Planeten mit realistischen Orbitalperioden, Eigenrotation und atmosphärischem Glow.</li>
+                            <li><strong>Mondphasen-Simulation:</strong> Physikalischer Schattenwurf mit Tag-/Nachtgrenze und synchroner 2D-Phasenanzeige.</li>
+                            <li><strong>Interaktiver Größenvergleich:</strong> Maßstabsgetreuer Vergleich vom Asteroiden Ceres bis hin zu Hyperriesen und Galaxien.</li>
+                            <li><strong>Sternenzyklus &amp; Jahreszeiten:</strong> Interaktive Lernmodule zum Lebenszyklus von Sternen und zur Entstehung der Jahreszeiten durch die Erdachsenneigung.</li>
+                            <li><strong>Didaktische Wissensstufen:</strong> Stufenlos einstellbares Wissensniveau für unterschiedliche Altersgruppen.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WebGL Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- Application Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script src="data.js?v=39"></script>
+    <script src="main.js?v=39"></script>
+</body>
+</html>
