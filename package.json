@@ -1,6 +1,6 @@
 {
   "name": "astronomie-explorer",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Interaktiver Astronomie Explorer",
   "main": "main.js",
   "scripts": {
